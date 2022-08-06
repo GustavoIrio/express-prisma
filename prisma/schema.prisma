@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  phone    String
+  password String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  orders Order[] // Relacionamento 1 * N entre User e Order
+
+  @@map("users")
+}
+
+enum OrderStatus {
+  WAITING_PAYMENT
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELED
+}
+
+model Order {
+  id String @id @default(uuid())
+
+  status OrderStatus @default(WAITING_PAYMENT) // Referência de pagamento
+
+  user    User?   @relation(fields: [user_id], references: [id]) // Relacionamento N * 1 entre Order e User 
+  user_id String?
+
+  orders_products OrderProduct[] // N * N entre Order e Product
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model Product {
+  id String @id @default(uuid())
+
+  name        String
+  description String
+  price       Decimal
+
+  orders_products     OrderProduct[] // N * N entre Order e Product
+  products_categories ProductCategory[] // N * N entre Product e Category
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("products")
+}
+
+model OrderProduct {
+  id String @id @default(uuid())
+
+  Order     Order?   @relation(fields: [orderId], references: [id])
+  orderId   String?
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+
+  @@map("orders_products")
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String @unique
+
+  products_categories ProductCategory[] // N * N entre Product e Category
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("categories")
+}
+
+model ProductCategory {
+  id String @id @default(uuid())
+
+  Product    Product?  @relation(fields: [productId], references: [id])
+  productId  String?
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+
+  @@map("products_categories")
+}
