@@ -49,12 +49,12 @@ model Order {
 model Product {
   id String @id @default(uuid())
 
-  name        String
+  name        String  @unique
   description String
   price       Decimal
 
-  orders_products     OrderProduct[] // N * N entre Order e Product
-  products_categories ProductCategory[] // N * N entre Product e Category
+  categories      Category[] // Produto pertence a uma categoria
+  orders_products OrderProduct[] // N * N entre Order e Product
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -77,21 +77,9 @@ model Category {
   id   String @id @default(uuid())
   name String @unique
 
-  products_categories ProductCategory[] // N * N entre Product e Category
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  products   Product[]
 
   @@map("categories")
-}
-
-model ProductCategory {
-  id String @id @default(uuid())
-
-  Product    Product?  @relation(fields: [productId], references: [id])
-  productId  String?
-  Category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?
-
-  @@map("products_categories")
 }
