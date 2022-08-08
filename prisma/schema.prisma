@@ -53,7 +53,7 @@ model Product {
   description String
   price       Decimal
 
-  categories      Category[] // Produto pertence a uma categoria
+  categories      Category[] // N * N entre Product e Category
   orders_products OrderProduct[] // N * N entre Order e Product
 
   created_at DateTime @default(now())
@@ -79,7 +79,7 @@ model Category {
 
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
-  products   Product[]
+  products   Product[] // N * N entre Product e Category
 
   @@map("categories")
 }

@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { CreateProductController } from "../modules/product/useCases/CreateProductController";
+import { ProductController } from "../modules/product/useCases/ProductController";
 
-const createProductController = new CreateProductController();
+const createProductController = new ProductController();
 
 const productRoutes = Router();
 
-productRoutes.post("/", createProductController.handle);
+productRoutes.post("/", createProductController.create);
+productRoutes.get("/", createProductController.findAll);
+
 
 export { productRoutes }

@@ -3,7 +3,7 @@ import { prisma } from "../../../database/prismaCliente";
 import { AppError } from "../../../errors/AppError";
 import { CreateUserDTO } from "../dtos/CreateUser.dto";
 
-export class CreateUser {
+export class UserService {
     async create({ name, email, phone, password }: CreateUserDTO): Promise<User> {
         const userAlreadyExists = await prisma.user.findUnique({
             where: {
@@ -26,4 +26,11 @@ export class CreateUser {
 
         return user;
     }
+
+    async findAll(): Promise<User[]> {
+        const users = await prisma.user.findMany({})
+
+        return users;
+    }
+
 }
